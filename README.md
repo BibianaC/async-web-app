@@ -29,15 +29,20 @@ Extra points for:
 
 ### Run
 - Google App Engine link
-- Tests `$ py.test`
+- Tests `$ py.test test_async_web_app.py `
 
 ## Comments
 
 [Google App Engine](https://async-web-app.appspot.com/)
 
+When I run Google App Engine locally `$ dev_appserver.py . `. I received the following error:
+
 ```
 ImportError: No module named wordcloud.query_integral_image
 ```
+I tried to copy `query_integral_image.so` to `app_engine_dependencies/wordcloud`.
+Then I deleted the part of the code that calls `query_integral_image`.
+I received the following error:
 
 ```
 ApplicationError: ApplicationError: 5 Attempt to bind port without permission.
