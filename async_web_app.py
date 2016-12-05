@@ -28,6 +28,10 @@ class MainHandler(tornado.web.RequestHandler):
         words_list = re.findall(r'\w+', text.lower())
         counter_dict = Counter(words_list)
 
+        for word in counter_dict.copy():
+            if type(word) is int or len(word) == 1:
+                counter_dict.pop(word)
+
         # Takes the 100 most common words and mutiplies them for its frequency
         most_common = [
             (word + ' ') * frequency
@@ -40,7 +44,7 @@ class MainHandler(tornado.web.RequestHandler):
 
         self.render("index.html", wordcloud=image)
 
-        print most_common_str
+        # print counter_dict
 
 
 class Application(tornado.web.Application):

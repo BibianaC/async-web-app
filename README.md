@@ -32,3 +32,20 @@ Extra points for:
 - Tests `$ py.test`
 
 ## Comments
+
+[Google App Engine](https://async-web-app.appspot.com/)
+
+```
+ImportError: No module named wordcloud.query_integral_image
+```
+
+```
+ApplicationError: ApplicationError: 5 Attempt to bind port without permission.
+
+DEBUG    2016-12-05 20:10:00,243 api_server.py:277] Handled remote_socket.CreateSocket in 0.0033
+ERROR    2016-12-05 20:10:00,697 wsgi.py:279] 
+Traceback (most recent call last):
+  File "/Users/Bibs/dev/google-cloud-sdk/platform/google_appengine/google/appengine/runtime/wsgi.py", line 267, in Handle
+    result = handler(dict(self._environ), self._StartResponse)
+TypeError: 'module' object is not callable
+```
