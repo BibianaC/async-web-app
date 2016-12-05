@@ -28,21 +28,27 @@ Extra points for:
   - `$ pip install -r requirements.test`
 
 ### Run
-- Google App Engine link
+- Async Web App
+  - `$ python async_web_app.py`
+  - Enter a `url` in the form.
+
 - Tests `$ py.test test_async_web_app.py `
 
 ## Comments
 
-[Google App Engine](https://async-web-app.appspot.com/)
+The application functions properly when ran locally, as described above.
+I did not managed to make it run in app engine.
 
-When I run Google App Engine locally `$ dev_appserver.py . `. I received the following error:
+### [Google App Engine](https://async-web-app.appspot.com/) - Doesn't work.
+
+When I run Google App Engine locally `$ dev_appserver.py . `. I receive the following error:
 
 ```
 ImportError: No module named wordcloud.query_integral_image
 ```
 I tried to copy `query_integral_image.so` to `app_engine_dependencies/wordcloud`.
 Then I deleted the part of the code that calls `query_integral_image`.
-I received the following error:
+I receive the following error:
 
 ```
 ApplicationError: ApplicationError: 5 Attempt to bind port without permission.
@@ -54,3 +60,30 @@ Traceback (most recent call last):
     result = handler(dict(self._environ), self._StartResponse)
 TypeError: 'module' object is not callable
 ```
+
+### MySQL DB - Not done.
+
+### Displaying just nouns and verbs (no prepositions or articles)
+
+Two possible ways of implementation.
+
+- Use [NLTK](http://www.nltk.org/) library
+  - Run the Python interpreter and type the commands:
+  ```
+  $ import nltk
+  $ nltk.download()
+  ```
+  - In the app:
+  ```
+  from nltk.corpus import stopwords
+
+  stop_words=set(stopwords.words('english'))
+  txt="a long string of text"
+  print filter(lambda w: not w in s,txt.split())
+  ```
+
+- Wordcloud library
+  ```
+  from wordcloud import WordCloud, STOPWORDS
+  wordcloud = WordCloud(stopwords=STOPWORDS).generate(most_common_str)
+  ```
