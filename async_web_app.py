@@ -1,6 +1,10 @@
 # CHECK ORDER
+from collections import Counter
 import os
+import re
 
+from bs4 import BeautifulSoup
+import requests
 import tornado.httpserver
 import tornado.ioloop
 import tornado.web
@@ -11,7 +15,20 @@ class MainHandler(tornado.web.RequestHandler):
         self.render("index.html")
 
     def post(self):
-        self.get_argument('fetch_url', None)
+        url = self.get_argument('fetch_url', None)
+        response = requests.get(url)
+        html = BeautifulSoup(response.text, 'lxml')
+
+        # Delete script, style and head elements.
+        for script in html(["script", "style", "head"]):
+            script.extract()
+
+        text = (html.text).encode('utf8')
+        words_list = re.findall(r'\w+', text.lower())
+        counter_dict = Counter(words_list)
+        most_common = counter_dict.most_common(100)
+
+        print most_common
 
 
 class Application(tornado.web.Application):
