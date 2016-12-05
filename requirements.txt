@@ -1,4 +1,7 @@
 beautifulsoup4==4.5.1
+image==1.5.5
 lxml==3.6.4
+numpy==1.11.2
 requests==2.12.3
 tornado==4.4.2
+wordcloud==1.2.1

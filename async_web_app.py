@@ -8,27 +8,39 @@ import requests
 import tornado.httpserver
 import tornado.ioloop
 import tornado.web
+from wordcloud import WordCloud
 
 
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
-        self.render("index.html")
+        self.render("index.html", wordcloud=None)
 
     def post(self):
         url = self.get_argument('fetch_url', None)
         response = requests.get(url)
         html = BeautifulSoup(response.text, 'lxml')
 
-        # Delete script, style and head elements.
-        for script in html(["script", "style", "head"]):
-            script.extract()
+        # Delete elements from html.
+        [script.extract() for script in html(
+            ['script', 'style', '[document]', 'head', 'title', 'meta'])]
 
         text = (html.text).encode('utf8')
         words_list = re.findall(r'\w+', text.lower())
         counter_dict = Counter(words_list)
-        most_common = counter_dict.most_common(100)
 
-        print most_common
+        # Takes the 100 most common words and mutiplies them for its frequency
+        most_common = [
+            (word + ' ') * frequency
+            for word, frequency in counter_dict.most_common(100)
+        ]
+        most_common_str = ' '.join(most_common)
+
+        wordcloud = WordCloud(background_color='white').generate(most_common_str)
+        image = wordcloud.to_image()
+
+        self.render("index.html", wordcloud=image)
+
+        print most_common_str
 
 
 class Application(tornado.web.Application):
