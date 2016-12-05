@@ -10,6 +10,9 @@ class MainHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("index.html")
 
+    def post(self):
+        self.get_argument('fetch_url', None)
+
 
 class Application(tornado.web.Application):
     def __init__(self):
