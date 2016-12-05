@@ -1,4 +1,3 @@
-# CHECK ORDER
 from collections import Counter
 import os
 import re
@@ -11,40 +10,56 @@ import tornado.web
 from wordcloud import WordCloud
 
 
+def get_html_text(url):
+    response = requests.get(url)
+    html = BeautifulSoup(response.text, 'lxml')
+
+    # Delete elements from html.
+    [script.extract() for script in html(
+        ['script', 'style', '[document]', 'head', 'title', 'meta'])]
+
+    return html.text.encode('utf8')
+
+
+def count_words(text):
+    words_list = re.findall(r'\w+', text.lower())
+    counter_dict = Counter(words_list)
+
+    # Remove integers and single character tokens.
+    for word in counter_dict.copy():
+        if type(word) is int or len(word) == 1:
+            counter_dict.pop(word)
+
+    return counter_dict
+
+
+def get_most_common_words(counter_dict):
+    # Take the 100 most common words and mutiply by their frequency.
+    # TODO find a better way.
+    most_common = [
+        (word + ' ') * frequency
+        for word, frequency in counter_dict.most_common(100)
+    ]
+    return ' '.join(most_common)
+
+
+def generate_word_cloud(string):
+    wordcloud = WordCloud(background_color='white').generate(string)
+    return wordcloud.to_image()
+
+
 class MainHandler(tornado.web.RequestHandler):
     def get(self):
         self.render("index.html", wordcloud=None)
 
     def post(self):
         url = self.get_argument('fetch_url', None)
-        response = requests.get(url)
-        html = BeautifulSoup(response.text, 'lxml')
+        text = get_html_text(url)
+        counter_dict = count_words(text)
+        most_common_str = get_most_common_words(counter_dict)
+        wordcloud = generate_word_cloud(most_common_str)
 
-        # Delete elements from html.
-        [script.extract() for script in html(
-            ['script', 'style', '[document]', 'head', 'title', 'meta'])]
-
-        text = (html.text).encode('utf8')
-        words_list = re.findall(r'\w+', text.lower())
-        counter_dict = Counter(words_list)
-
-        for word in counter_dict.copy():
-            if type(word) is int or len(word) == 1:
-                counter_dict.pop(word)
-
-        # Takes the 100 most common words and mutiplies them for its frequency
-        most_common = [
-            (word + ' ') * frequency
-            for word, frequency in counter_dict.most_common(100)
-        ]
-        most_common_str = ' '.join(most_common)
-
-        wordcloud = WordCloud(background_color='white').generate(most_common_str)
-        image = wordcloud.to_image()
-
-        self.render("index.html", wordcloud=image)
-
-        # print counter_dict
+        self.render("index.html", wordcloud=wordcloud)
 
 
 class Application(tornado.web.Application):
