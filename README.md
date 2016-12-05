@@ -23,7 +23,9 @@ Extra points for:
 ## Local development
 
 ### Installation
-- Install dependencies
+1. Download the project
+  - `$ git clone https://github.com/BibianaC/async-web-app.git`
+2. Install dependencies
   - `$ pip install -r requirements.txt`
   - `$ pip install -r requirements.test`
 
